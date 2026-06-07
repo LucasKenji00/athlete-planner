@@ -8,6 +8,7 @@ export async function GET(req: NextRequest) {
   }
 
   const email = req.nextUrl.searchParams.get('email')
+  const nutrition = req.nextUrl.searchParams.get('nutrition') === 'true'
   if (!email) {
     return NextResponse.json({ error: 'email query param required' }, { status: 400 })
   }
@@ -53,10 +54,11 @@ export async function GET(req: NextRequest) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        secret:     process.env.APPS_SCRIPT_SECRET!,
-        session_id: 'test-' + Date.now(),
+        secret:           process.env.APPS_SCRIPT_SECRET!,
+        session_id:       'test-' + Date.now(),
         email,
-        plan:       demoPlan,
+        nutrition_upsell: nutrition,
+        plan:             demoPlan,
       }),
     })
 
