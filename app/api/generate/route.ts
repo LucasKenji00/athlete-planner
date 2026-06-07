@@ -170,7 +170,7 @@ Only the raw JSON object, starting with { and ending with }.`,
 
         send('progress', { step: 5, message: 'Creating your Google Sheets spreadsheet...' })
 
-        const sheetsUrl = await writeToSheets(sessionId, session.email!, plan, (session as any).name)
+        const sheetsUrl = await writeToSheets(sessionId, session.email!, plan, (session as any).name, session.nutrition_upsell)
 
         await supabase
           .from('quiz_sessions')
@@ -215,16 +215,18 @@ async function writeToSheets(
   sessionId: string,
   email: string,
   plan: GeneratedPlan,
-  athleteName?: string
+  athleteName?: string,
+  nutritionUpsell?: boolean
 ): Promise<string> {
   const response = await fetch(process.env.APPS_SCRIPT_URL!, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      secret:        process.env.APPS_SCRIPT_SECRET!,
-      session_id:    sessionId,
+      secret:          process.env.APPS_SCRIPT_SECRET!,
+      session_id:      sessionId,
       email,
-      athlete_name:  athleteName || plan.profile.name || '',
+      athlete_name:    athleteName || plan.profile.name || '',
+      nutrition_upsell: nutritionUpsell ?? false,
       plan,
     }),
   })
