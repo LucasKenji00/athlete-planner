@@ -105,7 +105,7 @@ export default function LandingPage() {
 
         {/* Price */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 36 }}>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through', fontWeight: 500 }}>€29.99</span>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through', fontWeight: 500 }}>€29.97</span>
           <span style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-1px' }}>€14.97</span>
           <span style={{
             fontSize: 12, background: 'rgba(207,98,50,0.2)', border: '1px solid rgba(207,98,50,0.4)',
@@ -276,7 +276,7 @@ export default function LandingPage() {
             Get your plan today
           </h2>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 16, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through', fontWeight: 500 }}>€29.99</span>
+            <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through', fontWeight: 500 }}>€29.97</span>
             <span style={{ fontSize: 48, fontWeight: 900, color: '#fff', letterSpacing: '-2px', lineHeight: 1 }}>€14.97</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, margin: '0 0 32px' }}>
