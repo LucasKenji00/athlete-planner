@@ -7,12 +7,7 @@ export function CountdownTimer({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
   const [expired, setExpired] = useState(false)
 
   useEffect(() => {
-    const KEY = 'ap_offer_30min_v1'
-    let end = parseInt(localStorage.getItem(KEY) ?? '0')
-    if (!end || end < Date.now()) {
-      end = Date.now() + 30 * 60 * 1000
-      localStorage.setItem(KEY, String(end))
-    }
+    const end = Date.now() + 30 * 60 * 1000
     const tick = () => {
       const diff = Math.max(0, end - Date.now())
       if (diff === 0) { setExpired(true); setDisplay('00:00'); return }
