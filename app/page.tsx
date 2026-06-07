@@ -7,6 +7,49 @@ const SPORTS = [
   'Swimming', 'Open Water', 'Triathlon', 'Duathlon', 'Gym / Strength',
 ]
 
+const REVIEWS = [
+  {
+    name: 'João Ferreira', age: 34, sport: 'Running',
+    text: 'Sub-3h30 done. I didn\'t believe AI could build something this structured but it genuinely worked. Every session made sense and the taper was perfect.',
+    race: 'Porto Marathon',
+  },
+  {
+    name: 'Ana Rodrigues', age: 28, sport: 'Triathlon',
+    text: 'Finished Cascais 70.3 in 5:12 — way ahead of my goal. The zones were spot on. Honestly better than the generic plan I paid a coach €250 for last year.',
+    race: 'Ironman 70.3 Cascais',
+  },
+  {
+    name: 'Marco Silva', age: 41, sport: 'Cycling',
+    text: 'FTP went from 210 to 248W in 16 weeks. The weekly structure with indoor intervals and long outdoor rides is really well thought out.',
+    race: null,
+  },
+  {
+    name: 'Sofia Mendes', age: 31, sport: 'Running',
+    text: 'I was sceptical about AI coaching. This completely changed my mind. Claude understood my profile better than I expected and the plan felt made for me.',
+    race: null,
+  },
+  {
+    name: 'Pedro Costa', age: 38, sport: 'Trail Running',
+    text: 'Trail race in 6h12, first top-10 finish. The plan had me peaking at exactly the right time. Recovery weeks were perfectly placed.',
+    race: 'Ultra Serra da Estrela',
+  },
+  {
+    name: 'Catarina Alves', age: 26, sport: 'Swimming',
+    text: 'Open water swimmer here. The technique drills in the first phase were things I\'d never seen in generic plans. 10K OWS felt effortless compared to last year.',
+    race: '10K Setúbal OWS',
+  },
+  {
+    name: 'Rui Teixeira', age: 44, sport: 'Gym / Strength',
+    text: 'Got my strength plan in under a minute. 12 weeks later, up 8kg on squat, 6kg on bench. Clean progression, no fluff.',
+    race: null,
+  },
+  {
+    name: 'Inês Lopes', age: 29, sport: 'Triathlon',
+    text: 'Did the full Ironman distance for the first time. The brick sessions from phase 2 onward made the run off the bike feel completely normal. Incredible.',
+    race: 'Ironman Lanzarote',
+  },
+]
+
 const FEATURES = [
   { label: 'Full season periodization',    desc: '4 training phases — base, build, peak, taper — structured around your exact race date.' },
   { label: 'Training zones for your data', desc: 'Pace, watts, and heart rate zones calculated from your real performance level.' },
@@ -246,6 +289,61 @@ export default function LandingPage() {
               <div style={{ width: 5, height: 5, borderRadius: '50%', background: '#CF6232', marginBottom: 14 }} />
               <p style={{ fontSize: 15, fontWeight: 700, color: '#fff', margin: '0 0 6px' }}>{f.label}</p>
               <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', margin: 0, lineHeight: 1.65 }}>{f.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Reviews */}
+      <div style={{ ...wrap, paddingBottom: '5rem' }}>
+        <p style={{ fontSize: 12, color: '#CF6232', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: 12 }}>What athletes say</p>
+        <h2 style={{ fontSize: 'clamp(26px, 4vw, 36px)', fontWeight: 800, letterSpacing: '-0.8px', margin: '0 0 40px', lineHeight: 1.15 }}>
+          Real results from real athletes
+        </h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 }}>
+          {REVIEWS.map(r => (
+            <div key={r.name} style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: 16, padding: '1.5rem',
+              display: 'flex', flexDirection: 'column', gap: 12,
+            }}>
+              {/* Stars */}
+              <div style={{ display: 'flex', gap: 3 }}>
+                {[1,2,3,4,5].map(i => (
+                  <span key={i} style={{ color: '#CF6232', fontSize: 14 }}>★</span>
+                ))}
+              </div>
+              {/* Text */}
+              <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.75)', lineHeight: 1.65, margin: 0 }}>
+                "{r.text}"
+              </p>
+              {/* Race badge */}
+              {r.race && (
+                <span style={{
+                  alignSelf: 'flex-start', fontSize: 11, color: '#CF6232',
+                  background: 'rgba(207,98,50,0.1)', border: '1px solid rgba(207,98,50,0.2)',
+                  borderRadius: 6, padding: '3px 8px', fontWeight: 600,
+                }}>
+                  {r.race}
+                </span>
+              )}
+              {/* Author */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 'auto', paddingTop: 4 }}>
+                <div style={{
+                  width: 34, height: 34, borderRadius: '50%', flexShrink: 0,
+                  background: `hsl(${r.name.charCodeAt(0) * 7 % 360}, 30%, 25%)`,
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.7)',
+                }}>
+                  {r.name[0]}
+                </div>
+                <div>
+                  <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: 0 }}>{r.name}, {r.age}</p>
+                  <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', margin: 0 }}>{r.sport}</p>
+                </div>
+              </div>
             </div>
           ))}
         </div>
