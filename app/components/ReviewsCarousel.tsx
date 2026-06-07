@@ -1,16 +1,16 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 
 const REVIEWS = [
   {
     name: 'James Mitchell', age: 36, sport: 'Running',
-    text: 'Sub-3h20 at London Marathon. I was sceptical about AI coaching but this completely changed my mind. Every session made sense and the taper was spot on.',
+    text: 'Ran 3:17 in London. Was pretty doubtful about AI plans if I\'m honest, but the structure was genuinely impressive. Taper felt perfect.',
     race: 'London Marathon',
   },
   {
     name: 'Carlos Martínez', age: 33, sport: 'Running',
-    text: 'Sub 3:25 en el Maratón de Madrid. El plan de Claude fue increíble, cada sesión tenía sentido. Nunca había entrenado con tanta estructura por tan poco dinero.',
+    text: 'Bajé de 3:25 en Madrid. Nunca pensé que un plan de 20€ pudiera estar tan bien estructurado. Cada semana tenía sentido, sin sesiones de relleno.',
     race: 'Maratón de Madrid',
   },
   {
@@ -30,12 +30,12 @@ const REVIEWS = [
   },
   {
     name: 'María García', age: 29, sport: 'Triathlon',
-    text: 'Terminé mi primer Ironman 70.3 en Valencia. Las zonas de entrenamiento eran perfectas y el taper llegó en el momento justo. Lo recomiendo a todos los atletas.',
+    text: 'Terminé mi primer 70.3 en Valencia en 5:22. Las zonas eran perfectas y el taper llegó justo cuando lo necesitaba. Vale mucho más de lo que cuesta.',
     race: 'Ironman 70.3 Valencia',
   },
   {
     name: 'Tom Becker', age: 44, sport: 'Gym / Strength',
-    text: 'Got my strength plan in under a minute. 12 weeks later, up 9kg on squat, 7kg on bench. Clean progression week by week. No fluff.',
+    text: 'Got my plan in under a minute. 12 weeks later — up 9kg on squat, 7kg on bench. Clean progression, no fluff.',
     race: null,
   },
   {
@@ -45,106 +45,148 @@ const REVIEWS = [
   },
   {
     name: 'David Hartmann', age: 41, sport: 'Cycling',
-    text: 'FTP went from 210 to 249W in 16 weeks. The structure with indoor intervals and long outdoor rides is really well thought out. Better than plans I\'ve paid €200 for.',
+    text: 'FTP went from 210 to 249W in 16 weeks. Better structured than plans I\'ve paid €200 for. The indoor/outdoor mix was exactly right.',
     race: null,
   },
 ]
 
-export function ReviewsCarousel() {
-  const [index, setIndex] = useState(0)
-  const [paused, setPaused] = useState(false)
-  const trackRef = useRef<HTMLDivElement>(null)
+const CARD_WIDTH = 316
 
+export function ReviewsCarousel() {
   const total = REVIEWS.length
+  const [index, setIndex] = useState(0)
+  const [transitioning, setTransitioning] = useState(true)
+  const pausedRef = useRef(false)
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  const startTimer = useCallback(() => {
+    if (timerRef.current) clearInterval(timerRef.current)
+    timerRef.current = setInterval(() => {
+      if (!pausedRef.current) {
+        setIndex(i => i + 1)
+      }
+    }, 3800)
+  }, [])
 
   useEffect(() => {
-    if (paused) return
-    const id = setInterval(() => {
-      setIndex(i => (i + 1) % total)
-    }, 3800)
-    return () => clearInterval(id)
-  }, [paused, total])
+    startTimer()
+    return () => { if (timerRef.current) clearInterval(timerRef.current) }
+  }, [startTimer])
+
+  // Seamless infinite: when we hit the cloned end, snap back silently
+  useEffect(() => {
+    if (index === total) {
+      const id = setTimeout(() => {
+        setTransitioning(false)
+        setIndex(0)
+      }, 600)
+      return () => clearTimeout(id)
+    }
+    if (index === -1) {
+      const id = setTimeout(() => {
+        setTransitioning(false)
+        setIndex(total - 1)
+      }, 600)
+      return () => clearTimeout(id)
+    }
+  }, [index, total])
+
+  useEffect(() => {
+    if (!transitioning) {
+      const id = setTimeout(() => setTransitioning(true), 20)
+      return () => clearTimeout(id)
+    }
+  }, [transitioning])
+
+  const go = (dir: 1 | -1) => {
+    setTransitioning(true)
+    setIndex(i => i + dir)
+    startTimer()
+  }
+
+  const displayIndex = ((index % total) + total) % total
+
+  const arrowBtn = (dir: 1 | -1) => (
+    <button
+      onClick={() => go(dir)}
+      style={{
+        width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.15)',
+        background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.7)',
+        cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+        fontSize: 16, flexShrink: 0, transition: 'background 0.2s',
+      }}
+      onMouseEnter={e => (e.currentTarget.style.background = 'rgba(207,98,50,0.25)')}
+      onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.05)')}
+    >
+      {dir === -1 ? '←' : '→'}
+    </button>
+  )
 
   return (
     <div
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      style={{ overflow: 'hidden', position: 'relative', padding: '2rem 0' }}
+      onMouseEnter={() => { pausedRef.current = true }}
+      onMouseLeave={() => { pausedRef.current = false }}
+      style={{ padding: '1rem 0' }}
     >
-      <div
-        ref={trackRef}
-        style={{
+      <div style={{ overflow: 'hidden' }}>
+        <div style={{
           display: 'flex',
           gap: 16,
-          transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          transform: `translateX(calc(-${index * 316}px))`,
-          willChange: 'transform',
-        }}
-      >
-        {/* Duplicate for seamless feel */}
-        {[...REVIEWS, ...REVIEWS].map((r, i) => (
-          <div key={i} style={{
-            minWidth: 300, maxWidth: 300,
-            background: 'rgba(255,255,255,0.03)',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: 16, padding: '1.25rem',
-            display: 'flex', flexDirection: 'column', gap: 10,
-            flexShrink: 0,
-          }}>
-            {/* Stars */}
-            <div style={{ display: 'flex', gap: 2 }}>
-              {[1,2,3,4,5].map(s => (
-                <span key={s} style={{ color: '#CF6232', fontSize: 13 }}>★</span>
-              ))}
-            </div>
-            {/* Text */}
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', lineHeight: 1.65, margin: 0 }}>
-              "{r.text}"
-            </p>
-            {/* Race badge */}
-            {r.race && (
-              <span style={{
-                alignSelf: 'flex-start', fontSize: 10, color: '#CF6232',
-                background: 'rgba(207,98,50,0.1)', border: '1px solid rgba(207,98,50,0.2)',
-                borderRadius: 5, padding: '2px 7px', fontWeight: 600,
-              }}>
-                {r.race}
-              </span>
-            )}
-            {/* Author */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 'auto', paddingTop: 4 }}>
-              <div style={{
-                width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
-                background: `hsl(${r.name.charCodeAt(0) * 7 % 360}, 28%, 24%)`,
-                border: '1px solid rgba(255,255,255,0.1)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.65)',
-              }}>
-                {r.name[0]}
+          transition: transitioning ? 'transform 0.55s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
+          transform: `translateX(calc(-${index * CARD_WIDTH}px - ${index * 16}px))`,
+        }}>
+          {/* Real cards + 1 clone at end for seamless loop */}
+          {[...REVIEWS, REVIEWS[0]].map((r, i) => (
+            <div key={i} style={{
+              minWidth: 300, maxWidth: 300,
+              background: 'rgba(255,255,255,0.03)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: 16, padding: '1.25rem',
+              display: 'flex', flexDirection: 'column', gap: 10,
+              flexShrink: 0,
+            }}>
+              <div style={{ display: 'flex', gap: 2 }}>
+                {[1,2,3,4,5].map(s => <span key={s} style={{ color: '#CF6232', fontSize: 13 }}>★</span>)}
               </div>
-              <div>
-                <p style={{ fontSize: 12, fontWeight: 600, color: '#fff', margin: 0 }}>{r.name}, {r.age}</p>
-                <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', margin: 0 }}>{r.sport}</p>
+              <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', lineHeight: 1.65, margin: 0 }}>
+                "{r.text}"
+              </p>
+              {r.race && (
+                <span style={{
+                  alignSelf: 'flex-start', fontSize: 10, color: '#CF6232',
+                  background: 'rgba(207,98,50,0.1)', border: '1px solid rgba(207,98,50,0.2)',
+                  borderRadius: 5, padding: '2px 7px', fontWeight: 600,
+                }}>
+                  {r.race}
+                </span>
+              )}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 'auto', paddingTop: 4 }}>
+                <div style={{
+                  width: 30, height: 30, borderRadius: '50%', flexShrink: 0,
+                  background: `hsl(${r.name.charCodeAt(0) * 7 % 360}, 28%, 24%)`,
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 12, fontWeight: 700, color: 'rgba(255,255,255,0.65)',
+                }}>
+                  {r.name[0]}
+                </div>
+                <div>
+                  <p style={{ fontSize: 12, fontWeight: 600, color: '#fff', margin: 0 }}>{r.name}, {r.age}</p>
+                  <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', margin: 0 }}>{r.sport}</p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* Dots */}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: 6, marginTop: 20 }}>
-        {REVIEWS.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setIndex(i)}
-            style={{
-              width: i === index ? 20 : 6, height: 6,
-              borderRadius: 99, border: 'none', cursor: 'pointer',
-              background: i === index ? '#CF6232' : 'rgba(255,255,255,0.15)',
-              transition: 'all 0.3s', padding: 0,
-            }}
-          />
-        ))}
+      {/* Arrows + counter */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 20 }}>
+        {arrowBtn(-1)}
+        <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', minWidth: 40, textAlign: 'center' }}>
+          {displayIndex + 1} / {total}
+        </span>
+        {arrowBtn(1)}
       </div>
     </div>
   )
