@@ -105,8 +105,8 @@ export default function LandingPage() {
 
         {/* Price */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 36 }}>
-          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through', fontWeight: 500 }}>€49.99</span>
-          <span style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-1px' }}>€19.99</span>
+          <span style={{ fontSize: 18, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through', fontWeight: 500 }}>€29.99</span>
+          <span style={{ fontSize: 36, fontWeight: 900, color: '#fff', letterSpacing: '-1px' }}>€14.97</span>
           <span style={{
             fontSize: 12, background: 'rgba(207,98,50,0.2)', border: '1px solid rgba(207,98,50,0.4)',
             color: '#CF6232', borderRadius: 6, padding: '4px 10px', fontWeight: 700, letterSpacing: '0.5px',
@@ -212,7 +212,7 @@ export default function LandingPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 2 }}>
           {[
             { n: '01', title: 'Your profile',  desc: 'Tell us your sport, race date, fitness level, weekly availability, and weight. Takes 5 minutes.' },
-            { n: '02', title: 'One payment',   desc: 'Pay once. €19.99. No subscription, no monthly fees, no upsells after checkout.' },
+            { n: '02', title: 'One payment',   desc: 'Pay once. €14.97. No subscription, no monthly fees, no upsells after checkout.' },
             { n: '03', title: 'Your plan',     desc: 'Claude generates your full plan and delivers it as a Google Sheets file straight to your inbox.' },
           ].map((step, i, arr) => (
             <div key={step.n} style={{
@@ -239,7 +239,7 @@ export default function LandingPage() {
             background: 'rgba(207,98,50,0.1)', border: '1px solid rgba(207,98,50,0.2)',
             borderRadius: 7, padding: '6px 12px',
           }}>
-            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>€19.99 offer ends in</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)' }}>€14.97 offer ends in</span>
             <span style={{ color: '#CF6232' }}><CountdownTimer size="sm" /></span>
           </div>
         </div>
@@ -276,8 +276,8 @@ export default function LandingPage() {
             Get your plan today
           </h2>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginBottom: 16, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through', fontWeight: 500 }}>€49.99</span>
-            <span style={{ fontSize: 48, fontWeight: 900, color: '#fff', letterSpacing: '-2px', lineHeight: 1 }}>€19.99</span>
+            <span style={{ fontSize: 20, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through', fontWeight: 500 }}>€29.99</span>
+            <span style={{ fontSize: 48, fontWeight: 900, color: '#fff', letterSpacing: '-2px', lineHeight: 1 }}>€14.97</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, margin: '0 0 32px' }}>
             <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)' }}>This price ends in</span>
@@ -293,7 +293,7 @@ export default function LandingPage() {
             background: '#CF6232', color: '#fff', textDecoration: 'none',
             borderRadius: 12, fontSize: 17, fontWeight: 700,
           }}>
-            Build my plan — €19.99
+            Build my plan — €14.97
           </Link>
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.25)', marginTop: 16 }}>
             5-minute quiz · One-time payment · Money-back guarantee

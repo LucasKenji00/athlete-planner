@@ -98,17 +98,17 @@ export default function UpsellPage() {
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>Training plan</span>
-              <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>€19.99</span>
+              <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>€14.97</span>
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 14, color: '#CF6232', fontWeight: 600 }}>+ Nutrition guide</span>
-              <span style={{ fontSize: 14, color: '#CF6232', fontWeight: 700 }}>only +€6</span>
+              <span style={{ fontSize: 14, color: '#CF6232', fontWeight: 700 }}>only +€5</span>
             </div>
             <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 15, color: '#fff', fontWeight: 700 }}>Total</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through' }}>€35+</span>
-                <span style={{ fontSize: 18, color: '#fff', fontWeight: 800 }}>€25.99</span>
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through' }}>€29+</span>
+                <span style={{ fontSize: 18, color: '#fff', fontWeight: 800 }}>€19.97</span>
               </div>
             </div>
           </div>
@@ -152,7 +152,7 @@ export default function UpsellPage() {
               transition: 'background 0.2s',
             }}
           >
-            {loading === 'nutrition' ? 'Redirecting...' : 'Yes, add nutrition guide — €25.99'}
+            {loading === 'nutrition' ? 'Redirecting...' : 'Yes, add nutrition guide — €19.97'}
           </button>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -173,7 +173,7 @@ export default function UpsellPage() {
               transition: 'border-color 0.2s',
             }}
           >
-            {loading === 'basic' ? 'Redirecting...' : 'No thanks, just my training plan — €19.99'}
+            {loading === 'basic' ? 'Redirecting...' : 'No thanks, just my training plan — €14.97'}
           </button>
         </div>
 
