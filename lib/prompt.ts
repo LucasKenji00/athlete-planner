@@ -94,6 +94,7 @@ adaptados ao perfil exato de cada atleta — nível técnico, disponibilidade, d
 de performance e calendário de provas.
 
 PERFIL DO ATLETA:
+- Nome: ${quiz.name}
 - Modalidade: ${quiz.sport}
 - Prova principal: ${quiz.event_name || quiz.sport} — ${eventDateFormatted}
 - Meta: ${quiz.goal_time || 'completar a prova'}
@@ -169,6 +170,7 @@ O JSON deve seguir EXATAMENTE esta estrutura:
 
 {
   "profile": {
+    "name": string,
     "sport": string,
     "event_name": string,
     "event_date": string,

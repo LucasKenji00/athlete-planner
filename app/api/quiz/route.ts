@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabase
     .from('quiz_sessions')
     .insert({
+      name:                body.name,
       sport:               body.sport,
       event_date:          body.event_date,
       event_name:          body.event_name,

@@ -77,7 +77,7 @@ const s = {
   } as React.CSSProperties,
 }
 
-type FormData = Partial<QuizData> & { email?: string; injuries?: string; secondary_sports?: string[] }
+type FormData = Partial<QuizData> & { name?: string; email?: string; injuries?: string; secondary_sports?: string[] }
 
 export default function QuizPage() {
   const router = useRouter()
@@ -136,7 +136,7 @@ export default function QuizPage() {
     if (step === 2) return !!form.event_date
     if (step === 3) return !!form.level
     if (step === 4) return !!form.days_per_week
-    if (step === 5) return !!(form.weight_kg && form.email && isValidEmail(form.email))
+    if (step === 5) return !!(form.name?.trim() && form.weight_kg && form.email && isValidEmail(form.email))
     return false
   }
 
@@ -348,6 +348,11 @@ export default function QuizPage() {
           {/* ── Step 5 — Profile + email ── */}
           {step === 5 && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label style={s.label}>Your first name *</label>
+                <input style={s.input} placeholder="e.g. James"
+                  value={form.name ?? ''} onChange={e => set('name', e.target.value)} />
+              </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
                   <label style={s.label}>Weight (kg) *</label>

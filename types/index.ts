@@ -21,6 +21,7 @@ export type QuizData = {
   days_per_week: 3 | 4 | 5 | 6 | 7
 
   // Passo 5 — perfil físico
+  name: string
   weight_kg: number
   age?: number
 
@@ -52,6 +53,7 @@ export type GeneratedPlan = {
 }
 
 export type AthleteProfile = {
+  name?: string
   sport: string
   event_name: string
   event_date: string
