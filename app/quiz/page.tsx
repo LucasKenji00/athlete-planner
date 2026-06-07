@@ -105,7 +105,7 @@ export default function QuizPage() {
   const goTo = (n: number) => {
     setProcessingMsg(PROCESSING_MSGS[Math.floor(Math.random() * PROCESSING_MSGS.length)])
     setProcessing(true)
-    const delay = 1000 + Math.random() * 1500
+    const delay = 600 + Math.random() * 700
     setTimeout(() => {
       setProcessing(false)
       setVisible(false)
