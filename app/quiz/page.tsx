@@ -277,7 +277,7 @@ export default function QuizPage() {
               </div>
               {form.sport !== 'Academia' && (
                 <div>
-                  <label style={s.label}>Goal time (optional)</label>
+                  <label style={s.label}>Goal time for {SPORTS.find(sp => sp.value === form.sport)?.label ?? 'your primary sport'} (optional)</label>
                   <input style={s.input} placeholder="e.g. 3:30:00"
                     value={form.goal_time ?? ''} onChange={e => set('goal_time', e.target.value)} />
                 </div>
