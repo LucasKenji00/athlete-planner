@@ -92,9 +92,25 @@ export default function QuizPage() {
   const set = <K extends keyof FormData>(key: K, val: FormData[K]) =>
     setForm(p => ({ ...p, [key]: val }))
 
+  const [processing, setProcessing] = useState(false)
+  const [processingMsg, setProcessingMsg] = useState('')
+
+  const PROCESSING_MSGS = [
+    'AI is saving your answer...',
+    'Analysing your profile...',
+    'Personalising your plan...',
+    'Processing your data...',
+  ]
+
   const goTo = (n: number) => {
-    setVisible(false)
-    setTimeout(() => { setStep(n); setVisible(true) }, 180)
+    setProcessingMsg(PROCESSING_MSGS[Math.floor(Math.random() * PROCESSING_MSGS.length)])
+    setProcessing(true)
+    const delay = 1000 + Math.random() * 1500
+    setTimeout(() => {
+      setProcessing(false)
+      setVisible(false)
+      setTimeout(() => { setStep(n); setVisible(true) }, 180)
+    }, delay)
   }
 
   const toggleSport = (sport: Sport) => {
@@ -379,16 +395,16 @@ export default function QuizPage() {
           )}
           <button
             onClick={step < 5 ? () => goTo(step + 1) : handleSubmit}
-            disabled={!canNext() || loading}
+            disabled={!canNext() || loading || processing}
             style={{
               flex: 1, padding: '13px 20px', border: 'none', borderRadius: 10,
               color: '#fff', fontSize: 15, fontWeight: 600,
-              background: canNext() && !loading ? '#CF6232' : 'rgba(207,98,50,0.3)',
-              cursor: canNext() && !loading ? 'pointer' : 'not-allowed',
+              background: canNext() && !loading && !processing ? '#CF6232' : 'rgba(207,98,50,0.3)',
+              cursor: canNext() && !loading && !processing ? 'pointer' : 'not-allowed',
               transition: 'background 0.2s',
             }}
           >
-            {loading ? 'Saving...' : step < 5 ? 'Continue →' : 'Build My Plan →'}
+            {processing ? processingMsg : loading ? 'Saving...' : step < 5 ? 'Continue →' : 'Build My Plan →'}
           </button>
         </div>
 

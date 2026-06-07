@@ -89,13 +89,28 @@ export default function UpsellPage() {
             <h2 style={{ fontSize: 18, fontWeight: 700, color: '#fff', margin: 0 }}>
               Add a Personalized Nutrition Guide
             </h2>
-            <span style={{
-              fontSize: 13, fontWeight: 800, color: '#fff',
-              background: '#CF6232', borderRadius: 8, padding: '4px 10px',
-              letterSpacing: '0.3px',
-            }}>
-              +€6
-            </span>
+          </div>
+
+          {/* Price breakdown */}
+          <div style={{
+            background: 'rgba(0,0,0,0.25)', borderRadius: 12, padding: '14px 16px',
+            display: 'flex', flexDirection: 'column', gap: 8,
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>Training plan</span>
+              <span style={{ fontSize: 14, color: 'rgba(255,255,255,0.6)' }}>€19.99</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 14, color: '#CF6232', fontWeight: 600 }}>+ Nutrition guide</span>
+              <span style={{ fontSize: 14, color: '#CF6232', fontWeight: 700 }}>only +€6</span>
+            </div>
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: 8, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ fontSize: 15, color: '#fff', fontWeight: 700 }}>Total</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', textDecoration: 'line-through' }}>€35+</span>
+                <span style={{ fontSize: 18, color: '#fff', fontWeight: 800 }}>€25.99</span>
+              </div>
+            </div>
           </div>
 
           {/* Bullets */}
