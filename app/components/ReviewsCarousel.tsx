@@ -50,46 +50,88 @@ const REVIEWS = [
   },
 ]
 
+function Card({ r }: { r: (typeof REVIEWS)[number] }) {
+  return (
+    <div style={{
+      background: 'rgba(255,255,255,0.03)',
+      border: '1px solid rgba(255,255,255,0.07)',
+      borderRadius: 16, padding: '1.5rem',
+      display: 'flex', flexDirection: 'column', gap: 12,
+      minHeight: 220,
+    }}>
+      <div style={{ display: 'flex', gap: 2 }}>
+        {[1,2,3,4,5].map(s => <span key={s} style={{ color: '#CF6232', fontSize: 14 }}>★</span>)}
+      </div>
+      <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, margin: 0, flex: 1 }}>
+        "{r.text}"
+      </p>
+      {r.race && (
+        <span style={{
+          alignSelf: 'flex-start', fontSize: 10, color: '#CF6232',
+          background: 'rgba(207,98,50,0.1)', border: '1px solid rgba(207,98,50,0.2)',
+          borderRadius: 5, padding: '2px 7px', fontWeight: 600,
+        }}>
+          {r.race}
+        </span>
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 4 }}>
+        <div style={{
+          width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+          background: `hsl(${r.name.charCodeAt(0) * 7 % 360}, 28%, 24%)`,
+          border: '1px solid rgba(255,255,255,0.1)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.65)',
+        }}>
+          {r.name[0]}
+        </div>
+        <div>
+          <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: 0 }}>{r.name}, {r.age}</p>
+          <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', margin: 0 }}>{r.sport}</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export function ReviewsCarousel() {
   const total = REVIEWS.length
   const [index, setIndex] = useState(0)
-  const [visible, setVisible] = useState(true)
+  const [fading, setFading] = useState(false)
   const pausedRef = useRef(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  const fadeTo = (next: number) => {
-    setVisible(false)
-    setTimeout(() => {
-      setIndex(((next % total) + total) % total)
-      setVisible(true)
-    }, 250)
+  const prevIdx = ((index - 1) + total) % total
+  const nextIdx = (index + 1) % total
+
+  const fadeTo = (t: number) => {
+    const target = ((t % total) + total) % total
+    setFading(true)
+    setTimeout(() => { setIndex(target); setFading(false) }, 220)
   }
 
-  const resetTimer = (next?: number) => {
+  const startTimer = () => {
     if (timerRef.current) clearInterval(timerRef.current)
     timerRef.current = setInterval(() => {
       if (!pausedRef.current) {
-        setIndex(i => {
-          const n = (i + 1) % total
-          setVisible(false)
-          setTimeout(() => { setIndex(n); setVisible(true) }, 250)
-          return i
+        setIndex(curr => {
+          const n = (curr + 1) % total
+          setFading(true)
+          setTimeout(() => { setIndex(n); setFading(false) }, 220)
+          return curr
         })
       }
     }, 3800)
   }
 
   useEffect(() => {
-    resetTimer()
+    startTimer()
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
   }, [])
 
   const go = (dir: 1 | -1) => {
     fadeTo(index + dir)
-    resetTimer()
+    startTimer()
   }
-
-  const r = REVIEWS[index]
 
   const arrowBtn = (dir: 1 | -1) => (
     <button
@@ -111,47 +153,48 @@ export function ReviewsCarousel() {
     <div
       onMouseEnter={() => { pausedRef.current = true }}
       onMouseLeave={() => { pausedRef.current = false }}
-      style={{ padding: '1rem 0', maxWidth: 560, margin: '0 auto', paddingLeft: '1.5rem', paddingRight: '1.5rem' }}
+      style={{ padding: '1rem 0' }}
     >
-      <div style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(6px)',
-        transition: 'opacity 0.25s ease, transform 0.25s ease',
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
-        borderRadius: 16, padding: '1.5rem',
-        display: 'flex', flexDirection: 'column', gap: 12,
-        minHeight: 200,
-      }}>
-        <div style={{ display: 'flex', gap: 2 }}>
-          {[1,2,3,4,5].map(s => <span key={s} style={{ color: '#CF6232', fontSize: 14 }}>★</span>)}
-        </div>
-        <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.75)', lineHeight: 1.7, margin: 0, flex: 1 }}>
-          "{r.text}"
-        </p>
-        {r.race && (
-          <span style={{
-            alignSelf: 'flex-start', fontSize: 10, color: '#CF6232',
-            background: 'rgba(207,98,50,0.1)', border: '1px solid rgba(207,98,50,0.2)',
-            borderRadius: 5, padding: '2px 7px', fontWeight: 600,
-          }}>
-            {r.race}
-          </span>
-        )}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingTop: 4 }}>
+      {/* Clips the side peek cards */}
+      <div style={{ overflow: 'hidden', maxWidth: 660, margin: '0 auto' }}>
+        {/* Center card — peek cards overflow out from this */}
+        <div style={{ maxWidth: 560, margin: '0 auto', position: 'relative' }}>
+
+          {/* Left peek — prev card, blurred */}
           <div style={{
-            width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-            background: `hsl(${r.name.charCodeAt(0) * 7 % 360}, 28%, 24%)`,
-            border: '1px solid rgba(255,255,255,0.1)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,0.65)',
+            position: 'absolute',
+            top: 0,
+            right: 'calc(100% + 16px)',
+            width: 560,
+            filter: 'blur(4px)',
+            opacity: 0.18,
+            pointerEvents: 'none',
           }}>
-            {r.name[0]}
+            <Card r={REVIEWS[prevIdx]} />
           </div>
-          <div>
-            <p style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: 0 }}>{r.name}, {r.age}</p>
-            <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', margin: 0 }}>{r.sport}</p>
+
+          {/* Center card — active */}
+          <div style={{
+            opacity: fading ? 0 : 1,
+            transform: fading ? 'translateY(5px)' : 'translateY(0)',
+            transition: 'opacity 0.22s ease, transform 0.22s ease',
+          }}>
+            <Card r={REVIEWS[index]} />
           </div>
+
+          {/* Right peek — next card, blurred */}
+          <div style={{
+            position: 'absolute',
+            top: 0,
+            left: 'calc(100% + 16px)',
+            width: 560,
+            filter: 'blur(4px)',
+            opacity: 0.18,
+            pointerEvents: 'none',
+          }}>
+            <Card r={REVIEWS[nextIdx]} />
+          </div>
+
         </div>
       </div>
 

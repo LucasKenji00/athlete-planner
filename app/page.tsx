@@ -222,7 +222,7 @@ export default function LandingPage() {
               borderRight: i < arr.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.07)',
               borderRadius: i === 0 ? '12px 0 0 12px' : i === arr.length - 1 ? '0 12px 12px 0' : '0',
             }}>
-              <p style={{ fontSize: 34, fontWeight: 900, color: 'rgba(207,98,50,0.22)', margin: '0 0 20px', letterSpacing: '-1px', lineHeight: 1 }}>{step.n}</p>
+              <p style={{ fontSize: 34, fontWeight: 900, color: '#CF6232', margin: '0 0 20px', letterSpacing: '-1px', lineHeight: 1 }}>{step.n}</p>
               <p style={{ fontSize: 17, fontWeight: 700, color: '#fff', margin: '0 0 8px' }}>{step.title}</p>
               <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.45)', margin: 0, lineHeight: 1.65 }}>{step.desc}</p>
             </div>
