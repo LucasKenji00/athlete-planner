@@ -167,12 +167,23 @@ export default function QuizPage() {
   const progress = Math.round(((step - 1) / 4) * 100)
 
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '2rem', fontFamily: 'system-ui, -apple-system, sans-serif',
+    <div className="quiz-outer" style={{
+      minHeight: '100vh', display: 'flex', alignItems: 'flex-start', justifyContent: 'center',
+      padding: '2rem', paddingTop: 'max(2rem, env(safe-area-inset-top, 2rem))',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
       background: 'linear-gradient(135deg, #CF6232 0%, #1A0805 45%, #000000 100%)',
     }}>
-      <div style={{ maxWidth: 520, width: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <style>{`
+        @media (min-width: 641px) { .quiz-outer { align-items: center !important; } }
+        @media (max-width: 640px) {
+          .quiz-outer { padding: 1rem !important; padding-top: 1.25rem !important; }
+          .quiz-card  { padding: 1.25rem !important; }
+          .level-btn  { flex-direction: column !important; align-items: flex-start !important; gap: 3px !important; }
+          .sport-subtitle { display: none; }
+          .sport-btn { padding: 10px 12px !important; }
+        }
+      `}</style>
+      <div style={{ maxWidth: 520, width: '100%', display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -201,7 +212,7 @@ export default function QuizPage() {
         </div>
 
         {/* Card with fade transition */}
-        <div style={{
+        <div className="quiz-card" style={{
           background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(24px)',
           border: '1px solid rgba(255,255,255,0.1)', borderRadius: 20, padding: '2rem',
           opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(8px)',
@@ -221,13 +232,13 @@ export default function QuizPage() {
                 {SPORTS.map(sp => {
                   const active = selectedSports.includes(sp.value)
                   return (
-                    <button key={sp.value} onClick={() => toggleSport(sp.value)} style={{
+                    <button key={sp.value} onClick={() => toggleSport(sp.value)} className="sport-btn" style={{
                       ...sel(active), padding: '12px 14px', textAlign: 'left',
                       display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8,
                     }}>
                       <div>
                         <p style={{ fontSize: 14, fontWeight: 600, margin: '0 0 2px', color: '#fff' }}>{sp.label}</p>
-                        <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', margin: 0 }}>{sp.subtitle}</p>
+                        <p className="sport-subtitle" style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', margin: 0 }}>{sp.subtitle}</p>
                       </div>
                       {active && <div style={{ width: 7, height: 7, borderRadius: '50%', background: '#CF6232', flexShrink: 0, marginTop: 4 }} />}
                     </button>
@@ -290,7 +301,7 @@ export default function QuizPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                 {LEVELS.map(l => (
-                  <button key={l.value} onClick={() => set('level', l.value)} style={{
+                  <button key={l.value} onClick={() => set('level', l.value)} className="level-btn" style={{
                     ...sel(form.level === l.value), display: 'flex', alignItems: 'center',
                     justifyContent: 'space-between', padding: '14px 16px', textAlign: 'left',
                   }}>
