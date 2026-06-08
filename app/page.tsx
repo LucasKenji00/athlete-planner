@@ -30,6 +30,18 @@ const line: React.CSSProperties = { borderTop: '1px solid rgba(255,255,255,0.07)
 export default function LandingPage() {
   return (
     <div style={{ ...g, paddingTop: 40 }}>
+      <style>{`
+        @media (max-width: 640px) {
+          .nav-inner { padding: 1rem 1.25rem !important; }
+          .hero-br { display: none; }
+          .hero-buttons { flex-direction: column !important; align-items: stretch !important; }
+          .hero-btn { text-align: center !important; }
+          .steps-grid { display: flex !important; flex-direction: column !important; gap: 10px !important; }
+          .step-card { border-right: 1px solid rgba(255,255,255,0.07) !important; border-radius: 12px !important; }
+          .features-grid { grid-template-columns: 1fr !important; }
+          .callout-inner { padding: 1.25rem !important; }
+        }
+      `}</style>
 
       {/* Announcement bar — fixed top */}
       <div style={{
@@ -46,7 +58,7 @@ export default function LandingPage() {
       </div>
 
       {/* Nav */}
-      <nav style={{
+      <nav className="nav-inner" style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '1.25rem 2rem',
         position: 'sticky', top: 40,
@@ -91,8 +103,8 @@ export default function LandingPage() {
           fontSize: 'clamp(34px, 6vw, 58px)', fontWeight: 800, lineHeight: 1.08,
           letterSpacing: '-2px', margin: '0 0 24px',
         }}>
-          Your professional training plan,<br />
-          <span style={{ color: '#CF6232' }}>built by AI in 60 seconds.</span>
+          Your professional training plan,<br className="hero-br" />
+          <span style={{ color: '#CF6232' }}> built by AI in 60 seconds.</span>
         </h1>
         <p style={{
           fontSize: 17, color: 'rgba(255,255,255,0.5)', lineHeight: 1.75,
@@ -115,14 +127,14 @@ export default function LandingPage() {
           </span>
         </div>
 
-        <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
-          <Link href="/quiz" style={{
+        <div className="hero-buttons" style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 16 }}>
+          <Link href="/quiz" className="hero-btn" style={{
             padding: '15px 40px', background: '#CF6232', color: '#fff',
             borderRadius: 10, fontSize: 16, fontWeight: 700, textDecoration: 'none',
           }}>
             Build my plan
           </Link>
-          <a href="#features" style={{
+          <a href="#features" className="hero-btn" style={{
             padding: '15px 28px', background: 'transparent',
             border: '1px solid rgba(255,255,255,0.12)',
             color: 'rgba(255,255,255,0.65)', borderRadius: 10, fontSize: 15,
@@ -209,13 +221,13 @@ export default function LandingPage() {
         <h2 style={{ fontSize: 'clamp(26px, 4vw, 36px)', fontWeight: 800, letterSpacing: '-0.8px', margin: '0 0 40px', lineHeight: 1.15 }}>
           From quiz to plan in 3 steps
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 2 }}>
+        <div className="steps-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: 2 }}>
           {[
             { n: '01', title: 'Your profile',  desc: 'Tell us your sport, race date, fitness level, weekly availability, and weight. Takes 5 minutes.' },
             { n: '02', title: 'One payment',   desc: 'Pay once. €14.97. No subscription, no monthly fees, no upsells after checkout.' },
             { n: '03', title: 'Your plan',     desc: 'Claude generates your full plan and delivers it as a Google Sheets file straight to your inbox.' },
           ].map((step, i, arr) => (
-            <div key={step.n} style={{
+            <div key={step.n} className="step-card" style={{
               padding: '2rem',
               background: 'rgba(255,255,255,0.02)',
               border: '1px solid rgba(255,255,255,0.07)',
@@ -246,7 +258,7 @@ export default function LandingPage() {
         <h2 style={{ fontSize: 'clamp(26px, 4vw, 36px)', fontWeight: 800, letterSpacing: '-0.8px', margin: '0 0 40px', lineHeight: 1.15 }}>
           Everything a coach builds —<br />without the monthly retainer
         </h2>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
+        <div className="features-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
           {FEATURES.map(f => (
             <div key={f.label} style={{
               padding: '1.5rem',
