@@ -5,7 +5,7 @@
 // O que o utilizador preenche no quiz
 export type QuizData = {
   // Passo 1 — modalidade
-  sport: 'Corrida' | 'Trail Running' | 'Ciclismo' | 'Gravel/MTB' | 'Natação' | 'Open Water Swimming' | 'Triathlon' | 'Duathlon' | 'Academia'
+  sport: 'Running' | 'Trail Running' | 'Cycling' | 'Gravel/MTB' | 'Swimming' | 'Open Water Swimming' | 'Triathlon' | 'Duathlon' | 'Gym'
   secondary_sports?: string[]
 
   // Passo 2 — evento e meta
@@ -16,7 +16,7 @@ export type QuizData = {
   plan_start?: 'this_week' | 'next_week'
 
   // Passo 3 — nível e métrica real (opcional)
-  level: 'Iniciante' | 'Intermediário' | 'Avançado'
+  level: 'Beginner' | 'Intermediate' | 'Advanced'
   metric?: string             // "5:30 min/km" ou "220W" — se tiver dados reais
 
   // Passo 4 — disponibilidade

@@ -10,50 +10,50 @@ import { ptBR } from 'date-fns/locale'
 // Benchmarks internos por modalidade × nível
 // Usados quando o atleta não tem métrica real
 const BENCHMARKS: Record<string, Record<string, { metric: string; vol: string; hours: string }>> = {
-  Corrida: {
-    Iniciante:     { metric: '7:00 min/km', vol: '20–25 km/sem', hours: '~5–7h' },
-    Intermediário: { metric: '5:30 min/km', vol: '35–45 km/sem', hours: '~7–9h' },
-    Avançado:      { metric: '4:30 min/km', vol: '55–70 km/sem', hours: '~9–12h' },
+  Running: {
+    Beginner:     { metric: '7:00 min/km', vol: '20–25 km/week', hours: '~5–7h' },
+    Intermediate: { metric: '5:30 min/km', vol: '35–45 km/week', hours: '~7–9h' },
+    Advanced:     { metric: '4:30 min/km', vol: '55–70 km/week', hours: '~9–12h' },
   },
   'Trail Running': {
-    Iniciante:     { metric: '7:30 min/km trail', vol: '25–30 km/sem', hours: '~6–8h' },
-    Intermediário: { metric: '6:00 min/km trail', vol: '40–55 km/sem', hours: '~8–11h' },
-    Avançado:      { metric: '5:00 min/km trail', vol: '65–80 km/sem', hours: '~11–15h' },
+    Beginner:     { metric: '7:30 min/km trail', vol: '25–30 km/week', hours: '~6–8h' },
+    Intermediate: { metric: '6:00 min/km trail', vol: '40–55 km/week', hours: '~8–11h' },
+    Advanced:     { metric: '5:00 min/km trail', vol: '65–80 km/week', hours: '~11–15h' },
   },
-  Ciclismo: {
-    Iniciante:     { metric: 'FTP ~150W (2.1 W/kg)', vol: '4–6h/sem',   hours: '~5–7h' },
-    Intermediário: { metric: 'FTP ~220W (3.1 W/kg)', vol: '7–9h/sem',   hours: '~8–10h' },
-    Avançado:      { metric: 'FTP ~300W (4.3 W/kg)', vol: '10–14h/sem', hours: '~11–14h' },
+  Cycling: {
+    Beginner:     { metric: 'FTP ~150W (2.1 W/kg)', vol: '4–6h/week',   hours: '~5–7h' },
+    Intermediate: { metric: 'FTP ~220W (3.1 W/kg)', vol: '7–9h/week',   hours: '~8–10h' },
+    Advanced:     { metric: 'FTP ~300W (4.3 W/kg)', vol: '10–14h/week', hours: '~11–14h' },
   },
   'Gravel/MTB': {
-    Iniciante:     { metric: 'FTP ~140W (2.0 W/kg)', vol: '4–6h/sem',   hours: '~5–7h' },
-    Intermediário: { metric: 'FTP ~210W (3.0 W/kg)', vol: '7–10h/sem',  hours: '~8–11h' },
-    Avançado:      { metric: 'FTP ~280W (4.0 W/kg)', vol: '11–15h/sem', hours: '~11–15h' },
+    Beginner:     { metric: 'FTP ~140W (2.0 W/kg)', vol: '4–6h/week',   hours: '~5–7h' },
+    Intermediate: { metric: 'FTP ~210W (3.0 W/kg)', vol: '7–10h/week',  hours: '~8–11h' },
+    Advanced:     { metric: 'FTP ~280W (4.0 W/kg)', vol: '11–15h/week', hours: '~11–15h' },
   },
-  Natação: {
-    Iniciante:     { metric: '2:30 min/100m', vol: '3–5 km/sem',   hours: '~3–5h' },
-    Intermediário: { metric: '1:50 min/100m', vol: '8–12 km/sem',  hours: '~5–8h' },
-    Avançado:      { metric: '1:20 min/100m', vol: '15–20 km/sem', hours: '~8–12h' },
+  Swimming: {
+    Beginner:     { metric: '2:30 min/100m', vol: '3–5 km/week',   hours: '~3–5h' },
+    Intermediate: { metric: '1:50 min/100m', vol: '8–12 km/week',  hours: '~5–8h' },
+    Advanced:     { metric: '1:20 min/100m', vol: '15–20 km/week', hours: '~8–12h' },
   },
   'Open Water Swimming': {
-    Iniciante:     { metric: '2:45 min/100m OWS', vol: '4–6 km/sem',   hours: '~3–5h' },
-    Intermediário: { metric: '2:00 min/100m OWS', vol: '9–13 km/sem',  hours: '~5–8h' },
-    Avançado:      { metric: '1:30 min/100m OWS', vol: '16–22 km/sem', hours: '~8–12h' },
+    Beginner:     { metric: '2:45 min/100m OWS', vol: '4–6 km/week',   hours: '~3–5h' },
+    Intermediate: { metric: '2:00 min/100m OWS', vol: '9–13 km/week',  hours: '~5–8h' },
+    Advanced:     { metric: '1:30 min/100m OWS', vol: '16–22 km/week', hours: '~8–12h' },
   },
   Triathlon: {
-    Iniciante:     { metric: 'FTP ~150W / Pace run ~6:30/km / Swim ~2:30/100m', vol: 'Multi', hours: '~8–10h' },
-    Intermediário: { metric: 'FTP ~220W / Pace run ~5:15/km / Swim ~1:55/100m', vol: 'Multi', hours: '~10–13h' },
-    Avançado:      { metric: 'FTP ~300W / Pace run ~4:15/km / Swim ~1:25/100m', vol: 'Multi', hours: '~13–17h' },
+    Beginner:     { metric: 'FTP ~150W / Pace run ~6:30/km / Swim ~2:30/100m', vol: 'Multi', hours: '~8–10h' },
+    Intermediate: { metric: 'FTP ~220W / Pace run ~5:15/km / Swim ~1:55/100m', vol: 'Multi', hours: '~10–13h' },
+    Advanced:     { metric: 'FTP ~300W / Pace run ~4:15/km / Swim ~1:25/100m', vol: 'Multi', hours: '~13–17h' },
   },
   Duathlon: {
-    Iniciante:     { metric: 'Pace run ~6:00/km / FTP ~145W', vol: 'Multi', hours: '~6–8h' },
-    Intermediário: { metric: 'Pace run ~5:00/km / FTP ~215W', vol: 'Multi', hours: '~9–12h' },
-    Avançado:      { metric: 'Pace run ~4:00/km / FTP ~285W', vol: 'Multi', hours: '~12–16h' },
+    Beginner:     { metric: 'Pace run ~6:00/km / FTP ~145W', vol: 'Multi', hours: '~6–8h' },
+    Intermediate: { metric: 'Pace run ~5:00/km / FTP ~215W', vol: 'Multi', hours: '~9–12h' },
+    Advanced:     { metric: 'Pace run ~4:00/km / FTP ~285W', vol: 'Multi', hours: '~12–16h' },
   },
-  Academia: {
-    Iniciante:     { metric: '60% 1RM estimado', vol: '3 sessões/sem', hours: '~3–4h' },
-    Intermediário: { metric: '70–75% 1RM',        vol: '4 sessões/sem', hours: '~4–5h' },
-    Avançado:      { metric: '80–85% 1RM',         vol: '5 sessões/sem', hours: '~5–7h' },
+  Gym: {
+    Beginner:     { metric: 'Est. 60% 1RM', vol: '3 sessions/week', hours: '~3–4h' },
+    Intermediate: { metric: '70–75% 1RM',   vol: '4 sessions/week', hours: '~4–5h' },
+    Advanced:     { metric: '80–85% 1RM',   vol: '5 sessions/week', hours: '~5–7h' },
   },
 }
 
@@ -109,10 +109,12 @@ export function buildPrompt(quiz: QuizData): string {
   // -----------------------------------------------------------------
   // O prompt propriamente dito
   // -----------------------------------------------------------------
-  return `És um coach de atletismo e triátlo de elite com 20 anos de experiência.
-A tua especialidade é criar planos de treino periodizados, detalhados e realistas,
-adaptados ao perfil exato de cada atleta — nível técnico, disponibilidade, dados
-de performance e calendário de provas.
+  return `IMPORTANT: Generate the entire plan in English. All session descriptions, phase names, focus text, zone labels, objectives, periodization names — everything must be in English.
+
+You are an elite athletics and triathlon coach with 20 years of experience.
+Your specialty is creating periodized, detailed and realistic training plans,
+adapted to each athlete's exact profile — technical level, availability, performance
+data and race calendar.
 
 PERFIL DO ATLETA:
 - Nome: ${quiz.name}
@@ -157,27 +159,27 @@ INSTRUÇÕES DE QUALIDADE — OBRIGATÓRIAS:
 
 5. ESPECIFICIDADE POR MODALIDADE
    ${quiz.sport === 'Triathlon' ? `
-   - 3 disciplinas (swim/bike/run) distribuídas pelos ${quiz.days_per_week} dias
-   - Inclui sessões de brick (bike + corrida) a partir da Fase 2
-   - Academia de força 2×/semana nas Fases 1–2, manutenção nas Fases 3–4
-   - Foco na modalidade mais fraca nas primeiras fases` : ''}
-   ${quiz.sport === 'Corrida' ? `
-   - Distribuição: ~80% Z2, ~15% Z3-Z4, ~5% Z5 (princípio 80/20)
-   - Inclui rodagem longa semanal (ritmo Z2, distância crescente)
-   - Treino de intervalados uma vez por semana a partir da Fase 2
-   - Força funcional 2×/semana nas Fases 1–2` : ''}
-   ${quiz.sport === 'Ciclismo' ? `
-   - Inclui sessões indoor (intervalados) e outdoor (volume longo)
-   - Foco em FTP nas Fases 2–3, VO2max na Fase 4
-   - Força para ciclismo (inferiores) 2×/semana nas Fases 1–2` : ''}
-   ${quiz.sport === 'Natação' ? `
-   - Progressão técnica antes de volume: primeiras semanas foco em braçada
-   - Inclui drills específicos (buoy, prancha, palmar) nas primeiras fases
-   - Sessões de velocidade (sprints) a partir da Fase 2` : ''}
-   ${quiz.sport === 'Academia' ? `
-   - Estrutura Push/Pull/Legs ou Upper/Lower baseada nos ${quiz.days_per_week} dias
-   - Progressão de hipertrofia → força → peaking
-   - Inclui exercícios compostos E isolados com séries, reps, descanso` : ''}
+   - 3 disciplines (swim/bike/run) distributed across ${quiz.days_per_week} days
+   - Include brick sessions (bike + run) from Phase 2 onwards
+   - Strength gym 2×/week in Phases 1–2, maintenance in Phases 3–4
+   - Focus on weakest discipline in early phases` : ''}
+   ${quiz.sport === 'Running' ? `
+   - Distribution: ~80% Z2, ~15% Z3-Z4, ~5% Z5 (80/20 principle)
+   - Include weekly long run (Z2 pace, increasing distance)
+   - Interval session once per week from Phase 2 onwards
+   - Functional strength 2×/week in Phases 1–2` : ''}
+   ${quiz.sport === 'Cycling' ? `
+   - Include indoor sessions (intervals) and outdoor (long volume)
+   - Focus on FTP in Phases 2–3, VO2max in Phase 4
+   - Cycling-specific strength (lower body) 2×/week in Phases 1–2` : ''}
+   ${quiz.sport === 'Swimming' ? `
+   - Technical progression before volume: first weeks focus on stroke mechanics
+   - Include specific drills (buoy, kickboard, paddles) in early phases
+   - Speed sessions (sprints) from Phase 2 onwards` : ''}
+   ${quiz.sport === 'Gym' ? `
+   - Push/Pull/Legs or Upper/Lower structure based on ${quiz.days_per_week} days
+   - Progression: hypertrophy → strength → peaking
+   - Include compound AND isolation exercises with sets, reps, rest periods` : ''}
 
 6. DIAS DISPONÍVEIS: ${quiz.days_per_week} dias/semana
    - Distribui as sessões de forma inteligente (recuperação entre intensidades)

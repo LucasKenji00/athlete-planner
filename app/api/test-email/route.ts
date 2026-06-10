@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     profile: {
       sport: 'Triathlon', event_name: 'Ironman 70.3 Cascais',
       event_date: '2026-10-04', goal_time: '5:00:00',
-      level: 'Intermediário', metric: 'FTP 220W / 5:15 min/km',
+      level: 'Intermediate', metric: 'FTP 220W / 5:15 min/km',
       weeks_total: 24, hours_per_week_avg: '~10–12h',
       summary: 'Triatleta intermédio, meta sub-5h em Cascais 70.3',
     },

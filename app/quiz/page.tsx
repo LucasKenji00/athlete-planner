@@ -9,21 +9,21 @@ type Sport = QuizData['sport']
 type Level = QuizData['level']
 
 const SPORTS: { value: Sport; label: string; subtitle: string }[] = [
-  { value: 'Corrida',             label: 'Running',         subtitle: '5K, 10K, Half Marathon, Marathon' },
+  { value: 'Running',             label: 'Running',         subtitle: '5K, 10K, Half Marathon, Marathon' },
   { value: 'Trail Running',       label: 'Trail Running',   subtitle: '10K Trail, Ultra, Skyrace' },
-  { value: 'Ciclismo',            label: 'Cycling (Road)',  subtitle: 'Gran Fondo, Stage Race, Century Ride' },
+  { value: 'Cycling',             label: 'Cycling (Road)',  subtitle: 'Gran Fondo, Stage Race, Century Ride' },
   { value: 'Gravel/MTB',          label: 'Gravel / MTB',   subtitle: 'Gravel Race, XCO, Marathon MTB' },
-  { value: 'Natação',             label: 'Swimming',        subtitle: 'Pool 1.5K, 3.8K, Competition' },
+  { value: 'Swimming',            label: 'Swimming',        subtitle: 'Pool 1.5K, 3.8K, Competition' },
   { value: 'Open Water Swimming', label: 'Open Water',      subtitle: '3K, 5K, 10K OWS' },
   { value: 'Triathlon',           label: 'Triathlon',       subtitle: 'Sprint, Olympic, 70.3, Ironman' },
   { value: 'Duathlon',            label: 'Duathlon',        subtitle: 'Run-Bike-Run, Sprint, Standard' },
-  { value: 'Academia',            label: 'Gym / Strength',  subtitle: 'Hypertrophy, Strength, Powerlifting' },
+  { value: 'Gym',                 label: 'Gym / Strength',  subtitle: 'Hypertrophy, Strength, Powerlifting' },
 ]
 
 const LEVELS: { value: Level; label: string; desc: string }[] = [
-  { value: 'Iniciante',     label: 'Beginner',     desc: 'Less than 1 year of practice' },
-  { value: 'Intermediário', label: 'Intermediate', desc: '1–3 years of regular training' },
-  { value: 'Avançado',      label: 'Advanced',     desc: '3+ years, competing regularly' },
+  { value: 'Beginner',     label: 'Beginner',     desc: 'Less than 1 year of practice' },
+  { value: 'Intermediate', label: 'Intermediate', desc: '1–3 years of regular training' },
+  { value: 'Advanced',     label: 'Advanced',     desc: '3+ years, competing regularly' },
 ]
 
 const INJURIES = [
@@ -35,15 +35,15 @@ const INJURIES = [
 ]
 
 const METRIC_HINTS: Partial<Record<Sport, string>> = {
-  Corrida:               'e.g. 5:30 min/km',
+  Running:               'e.g. 5:30 min/km',
   'Trail Running':       'e.g. 6:00 min/km trail',
-  Ciclismo:              'e.g. 220W FTP',
+  Cycling:               'e.g. 220W FTP',
   'Gravel/MTB':          'e.g. 210W FTP',
-  Natação:               'e.g. 1:50 min/100m',
+  Swimming:              'e.g. 1:50 min/100m',
   'Open Water Swimming': 'e.g. 2:00 min/100m OWS',
   Triathlon:             'e.g. 220W FTP / 5:15 min/km',
   Duathlon:              'e.g. 5:00 min/km / 210W FTP',
-  Academia:              'e.g. 80kg squat 1RM',
+  Gym:                   'e.g. 80kg squat 1RM',
 }
 
 const TITLES = [
@@ -141,7 +141,7 @@ export default function QuizPage() {
 
   const canNext = (): boolean => {
     if (step === 1) return selectedSports.length > 0 && (selectedSports.length === 1 || !!form.sport)
-    if (step === 2) return !!(form.event_date && (form.sport === 'Academia' || form.race_distance_km?.trim()))
+    if (step === 2) return !!(form.event_date && (form.sport === 'Gym' || form.race_distance_km?.trim()))
     if (step === 3) return !!form.level
     if (step === 4) return !!form.days_per_week
     if (step === 5) return !!(form.name?.trim() && form.weight_kg && form.email && isValidEmail(form.email))
@@ -285,7 +285,7 @@ export default function QuizPage() {
                 <input style={s.input} placeholder="e.g. Paris Marathon, Ironman 70.3"
                   value={form.event_name ?? ''} onChange={e => set('event_name', e.target.value)} />
               </div>
-              {form.sport !== 'Academia' && (
+              {form.sport !== 'Gym' && (
                 <div>
                   <label style={s.label}>Race distance *</label>
                   <div style={{ display: 'flex', gap: 8 }}>
@@ -330,7 +330,7 @@ export default function QuizPage() {
                   Don't have a race yet? Pick a target date anyway — the AI will build around it.
                 </p>
               </div>
-              {form.sport !== 'Academia' && (
+              {form.sport !== 'Gym' && (
                 <div>
                   <label style={s.label}>Goal time for {SPORTS.find(sp => sp.value === form.sport)?.label ?? 'your primary sport'} (optional)</label>
                   <input style={s.input} placeholder="e.g. 3:30:00"

@@ -45,8 +45,8 @@ const ZONE_COLORS: Record<string, string> = {
 }
 
 const SPORT_ICONS: Record<string, string> = {
-  Corrida: '🏃', 'Trail Running': '🏔️', Ciclismo: '🚴', 'Gravel/MTB': '🚵',
-  Natação: '🏊', 'Open Water Swimming': '🌊', Triathlon: '🏅', Duathlon: '⚡', Academia: '💪',
+  Running: '🏃', 'Trail Running': '🏔️', Cycling: '🚴', 'Gravel/MTB': '🚵',
+  Swimming: '🏊', 'Open Water Swimming': '🌊', Triathlon: '🏅', Duathlon: '⚡', Gym: '💪',
 }
 
 export default function PreviewPage() {
