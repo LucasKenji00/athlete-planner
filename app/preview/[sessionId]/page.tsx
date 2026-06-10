@@ -141,6 +141,7 @@ export default function PreviewPage() {
       minHeight: '100vh', padding: '2rem',
       fontFamily: 'system-ui, -apple-system, sans-serif',
       background: 'linear-gradient(135deg, #CF6232 0%, #1A0805 45%, #000000 100%)',
+      overflowX: 'hidden',
     }}>
       <div style={{ maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
 
@@ -214,16 +215,18 @@ export default function PreviewPage() {
                   <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', margin: '0 0 8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                     {b.label}
                   </p>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 6 }}>
-                    {(['z1', 'z2', 'z3', 'z4', 'z5'] as const).map(z => (
-                      <div key={z} style={{
-                        background: 'rgba(255,255,255,0.05)', borderRadius: 8, padding: '8px 6px',
-                        textAlign: 'center', borderTop: `2px solid ${ZONE_COLORS[z]}`,
-                      }}>
-                        <p style={{ fontSize: 10, color: ZONE_COLORS[z], fontWeight: 700, margin: '0 0 4px', textTransform: 'uppercase' }}>{z}</p>
-                        <p style={{ fontSize: 11, color: '#fff', margin: 0, lineHeight: 1.3 }}>{b.data![z]}</p>
-                      </div>
-                    ))}
+                  <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' as 'touch', marginLeft: -4, marginRight: -4, paddingLeft: 4, paddingRight: 4 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, minmax(72px, 1fr))', gap: 6, minWidth: 360 }}>
+                      {(['z1', 'z2', 'z3', 'z4', 'z5'] as const).map(z => (
+                        <div key={z} style={{
+                          background: 'rgba(255,255,255,0.05)', borderRadius: 8, padding: '8px 6px',
+                          textAlign: 'center', borderTop: `2px solid ${ZONE_COLORS[z]}`,
+                        }}>
+                          <p style={{ fontSize: 10, color: ZONE_COLORS[z], fontWeight: 700, margin: '0 0 4px', textTransform: 'uppercase' }}>{z}</p>
+                          <p style={{ fontSize: 11, color: '#fff', margin: 0, lineHeight: 1.3, wordBreak: 'break-word' }}>{b.data![z]}</p>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
