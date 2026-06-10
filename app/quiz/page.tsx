@@ -323,7 +323,7 @@ export default function QuizPage() {
               )}
               <div>
                 <label style={s.label}>Race date *</label>
-                <input type="date" style={{ ...s.input, colorScheme: 'dark' }} value={form.event_date ?? ''}
+                <input type="date" style={{ ...s.input, WebkitAppearance: 'none', appearance: 'none', colorScheme: 'dark', maxWidth: '100%' }} value={form.event_date ?? ''}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={e => set('event_date', e.target.value)} />
                 <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', margin: '6px 0 0' }}>
