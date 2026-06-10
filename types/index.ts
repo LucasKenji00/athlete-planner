@@ -11,7 +11,9 @@ export type QuizData = {
   // Passo 2 — evento e meta
   event_date: string          // ISO: "2027-04-18"
   event_name?: string         // "Ironman Valencia 70.3"
+  race_distance_km?: string   // "21.1 km", "42 km", "70.3 miles"
   goal_time?: string          // "4:50:00" ou "1:45:00"
+  plan_start?: 'this_week' | 'next_week'
 
   // Passo 3 — nível e métrica real (opcional)
   level: 'Iniciante' | 'Intermediário' | 'Avançado'

@@ -29,6 +29,8 @@ export async function POST(req: NextRequest) {
       nutrition_upsell:    body.nutrition_upsell ?? false,
       secondary_sports:    body.secondary_sports ?? [],
       injuries:            body.injuries ?? null,
+      race_distance_km:    body.race_distance_km ?? null,
+      plan_start:          body.plan_start ?? 'next_week',
       email:               body.email,
       status:              'pending',
     })

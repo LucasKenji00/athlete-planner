@@ -57,11 +57,32 @@ const BENCHMARKS: Record<string, Record<string, { metric: string; vol: string; h
   },
 }
 
+function nextMonday(from: Date): Date {
+  const d = new Date(from)
+  const day = d.getDay() // 0=Sun, 1=Mon, ...
+  const daysUntilMonday = day === 0 ? 1 : day === 1 ? 7 : 8 - day
+  d.setDate(d.getDate() + daysUntilMonday)
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+
+function thisMonday(from: Date): Date {
+  const d = new Date(from)
+  const day = d.getDay()
+  const daysBack = day === 0 ? -6 : 1 - day
+  d.setDate(d.getDate() + daysBack)
+  d.setHours(0, 0, 0, 0)
+  return d
+}
+
 export function buildPrompt(quiz: QuizData): string {
   const eventDate = parseISO(quiz.event_date)
   const today = new Date()
   const weeksTotal = Math.max(4, differenceInWeeks(eventDate, today))
   const eventDateFormatted = format(eventDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
+
+  const planStartDate = quiz.plan_start === 'this_week' ? thisMonday(today) : nextMonday(today)
+  const planStartFormatted = format(planStartDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })
 
   const benchmark = BENCHMARKS[quiz.sport]?.[quiz.level]
   const refMetric = quiz.metric?.trim() || benchmark?.metric || 'não informado'
@@ -96,8 +117,9 @@ de performance e calendário de provas.
 PERFIL DO ATLETA:
 - Nome: ${quiz.name}
 - Modalidade: ${quiz.sport}
-- Prova principal: ${quiz.event_name || quiz.sport} — ${eventDateFormatted}
+- Prova principal: ${quiz.event_name || quiz.sport}${quiz.race_distance_km ? ` (${quiz.race_distance_km})` : ''} — ${eventDateFormatted}
 - Meta: ${quiz.goal_time || 'completar a prova'}
+- Data de início do plano: ${planStartFormatted}
 - Nível declarado: ${quiz.level}
 - Métrica de referência: ${refMetric}
 - Dias de treino disponíveis por semana: ${quiz.days_per_week}

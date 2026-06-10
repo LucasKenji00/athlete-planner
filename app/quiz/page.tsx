@@ -277,6 +277,13 @@ export default function QuizPage() {
                 <input style={s.input} placeholder="e.g. Paris Marathon, Ironman 70.3"
                   value={form.event_name ?? ''} onChange={e => set('event_name', e.target.value)} />
               </div>
+              {form.sport !== 'Academia' && (
+                <div>
+                  <label style={s.label}>Race distance (optional)</label>
+                  <input style={s.input} placeholder="e.g. 21.1 km, 42 km, 70.3 miles"
+                    value={form.race_distance_km ?? ''} onChange={e => set('race_distance_km', e.target.value)} />
+                </div>
+              )}
               <div>
                 <label style={s.label}>Race date *</label>
                 <input type="date" style={s.input} value={form.event_date ?? ''}
@@ -293,6 +300,19 @@ export default function QuizPage() {
                     value={form.goal_time ?? ''} onChange={e => set('goal_time', e.target.value)} />
                 </div>
               )}
+              <div>
+                <label style={{ ...s.label, marginBottom: 10 }}>When do you want to start training?</label>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {(['next_week', 'this_week'] as const).map(opt => (
+                    <button key={opt} onClick={() => set('plan_start', opt)} style={{
+                      ...sel((form.plan_start ?? 'next_week') === opt),
+                      flex: 1, padding: '12px 10px', fontSize: 14, fontWeight: 500,
+                    }}>
+                      {opt === 'next_week' ? 'Next week' : 'This week'}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 

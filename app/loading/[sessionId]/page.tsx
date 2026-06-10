@@ -65,9 +65,40 @@ export default function LoadingPage() {
     })
 
     es.onerror = () => {
-      if (es.readyState === EventSource.CLOSED) return
-      setError('Connection lost. Reload the page to continue.')
       es.close()
+      // SSE dropped (Vercel timeout) — poll Supabase to see if plan finished anyway
+      let attempts = 0
+      const poll = async () => {
+        try {
+          const res = await fetch(`/api/session/${sessionId}`)
+          const data = await res.json()
+          if (data.status === 'completed') {
+            const plan = data.generated_plan
+            if (plan) {
+              sessionStorage.setItem(`plan_${sessionId}`, JSON.stringify({
+                sport:         plan.profile?.sport,
+                event_name:    plan.profile?.event_name,
+                weeks_total:   plan.profile?.weeks_total,
+                hours_per_week: plan.profile?.hours_per_week_avg,
+                phases:        plan.periodization?.length ?? 0,
+                zones:         plan.zones,
+                first_week:    plan.weeks?.[0],
+              }))
+            }
+            router.push(`/preview/${sessionId}`)
+            return
+          }
+          if (data.status === 'error' || attempts >= 24) {
+            setError('An unexpected error occurred. Your payment is safe — contact support.')
+            return
+          }
+          attempts++
+          setTimeout(poll, 5000)
+        } catch {
+          setError('An unexpected error occurred. Your payment is safe — contact support.')
+        }
+      }
+      poll()
     }
 
     return () => es.close()
