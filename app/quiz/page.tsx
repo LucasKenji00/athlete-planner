@@ -88,9 +88,17 @@ export default function QuizPage() {
   const [selectedSports, setSelectedSports] = useState<Sport[]>([])
   const [selectedInjury, setSelectedInjury] = useState('')
   const [otherInjury, setOtherInjury] = useState('')
+  const [raceDistValue, setRaceDistValue] = useState('')
+  const [raceDistUnit, setRaceDistUnit] = useState<'km' | 'miles'>('km')
 
   const set = <K extends keyof FormData>(key: K, val: FormData[K]) =>
     setForm(p => ({ ...p, [key]: val }))
+
+  const setRaceDist = (value: string, unit: 'km' | 'miles') => {
+    setRaceDistValue(value)
+    setRaceDistUnit(unit)
+    set('race_distance_km', value.trim() ? `${value.trim()} ${unit}` : '')
+  }
 
   const [processing, setProcessing] = useState(false)
   const [processingMsg, setProcessingMsg] = useState('')
@@ -280,13 +288,42 @@ export default function QuizPage() {
               {form.sport !== 'Academia' && (
                 <div>
                   <label style={s.label}>Race distance *</label>
-                  <input style={s.input} placeholder="e.g. 21.1 km, 42 km, 70.3 miles"
-                    value={form.race_distance_km ?? ''} onChange={e => set('race_distance_km', e.target.value)} />
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input
+                      style={{ ...s.input, flex: 1 }}
+                      type="number"
+                      inputMode="decimal"
+                      placeholder="e.g. 21.1"
+                      value={raceDistValue}
+                      onChange={e => setRaceDist(e.target.value, raceDistUnit)}
+                    />
+                    <div style={{ display: 'flex', borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.15)', flexShrink: 0 }}>
+                      {(['km', 'miles'] as const).map(unit => (
+                        <button
+                          key={unit}
+                          type="button"
+                          onClick={() => setRaceDist(raceDistValue, unit)}
+                          style={{
+                            padding: '12px 16px',
+                            fontSize: 14,
+                            fontWeight: 500,
+                            border: 'none',
+                            cursor: 'pointer',
+                            background: raceDistUnit === unit ? '#CF6232' : 'rgba(255,255,255,0.08)',
+                            color: raceDistUnit === unit ? '#fff' : 'rgba(255,255,255,0.5)',
+                            transition: 'all 0.2s',
+                          }}
+                        >
+                          {unit}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               )}
               <div>
                 <label style={s.label}>Race date *</label>
-                <input type="date" style={s.input} value={form.event_date ?? ''}
+                <input type="date" style={{ ...s.input, colorScheme: 'dark' }} value={form.event_date ?? ''}
                   min={new Date().toISOString().split('T')[0]}
                   onChange={e => set('event_date', e.target.value)} />
                 <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', margin: '6px 0 0' }}>

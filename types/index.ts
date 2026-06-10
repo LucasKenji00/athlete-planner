@@ -50,6 +50,7 @@ export type GeneratedPlan = {
   zones: TrainingZones
   periodization: PeriodizationBlock[]
   weeks: TrainingWeek[]
+  strength_program?: StrengthSession[]
   race_day_plan?: RaceDayPlan
   nutrition_plan?: NutritionPlan   // só se upsell=true
 }
@@ -107,6 +108,22 @@ export type TrainingSession = {
   zone: string           // "Z2–Z3" ou "—"
   time_of_day?: string   // "07h00–08h00" (opcional)
   objective: string      // "Base corrida + ritmo"
+}
+
+export type StrengthSession = {
+  session_name: string
+  day_suggestion: string
+  exercises: StrengthExercise[]
+}
+
+export type StrengthExercise = {
+  name: string
+  primary_muscle: string
+  secondary_muscle: string
+  sport_reason: string
+  ph1: string
+  ph2: string
+  ph3: string
 }
 
 export type RaceDayPlan = {

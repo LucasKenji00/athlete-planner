@@ -183,6 +183,15 @@ INSTRUÇÕES DE QUALIDADE — OBRIGATÓRIAS:
    - Distribui as sessões de forma inteligente (recuperação entre intensidades)
    - Não sobrecarrega dias consecutivos com alta intensidade
    - Sexta ou dia antes do treino longo = descanso ou recovery
+
+7. PERSONALISED STRENGTH PROGRAM
+   - Generate a strength_program array with 2-3 sessions tailored specifically for ${quiz.sport} at ${quiz.level} level
+   - Choose exercises based on the specific demands of ${quiz.sport}
+   - If injuries/limitations exist (${quiz.injuries || 'none'}), avoid exercises that aggravate them
+   - Distribute across available days (${quiz.days_per_week} days/week)
+   - Include progression across phases (ph1 = foundation, ph2 = development, ph3 = maintenance)
+   - For endurance sports: focus on injury prevention and sport-specific strength
+   - For gym/strength sports: full hypertrophy and strength progression
 ${nutritionSection}
 FORMATO DE OUTPUT:
 Responde APENAS com JSON válido. Sem texto antes ou depois. Sem markdown.
@@ -238,6 +247,23 @@ O JSON deve seguir EXATAMENTE esta estrutura:
           "zone": string,
           "time_of_day": string,
           "objective": string
+        }
+      ]
+    }
+  ],
+  "strength_program": [
+    {
+      "session_name": string,
+      "day_suggestion": string,
+      "exercises": [
+        {
+          "name": string,
+          "primary_muscle": string,
+          "secondary_muscle": string,
+          "sport_reason": string,
+          "ph1": string,
+          "ph2": string,
+          "ph3": string
         }
       ]
     }
