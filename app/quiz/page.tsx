@@ -133,7 +133,7 @@ export default function QuizPage() {
 
   const canNext = (): boolean => {
     if (step === 1) return selectedSports.length > 0 && (selectedSports.length === 1 || !!form.sport)
-    if (step === 2) return !!form.event_date
+    if (step === 2) return !!(form.event_date && (form.sport === 'Academia' || form.race_distance_km?.trim()))
     if (step === 3) return !!form.level
     if (step === 4) return !!form.days_per_week
     if (step === 5) return !!(form.name?.trim() && form.weight_kg && form.email && isValidEmail(form.email))
@@ -279,7 +279,7 @@ export default function QuizPage() {
               </div>
               {form.sport !== 'Academia' && (
                 <div>
-                  <label style={s.label}>Race distance (optional)</label>
+                  <label style={s.label}>Race distance *</label>
                   <input style={s.input} placeholder="e.g. 21.1 km, 42 km, 70.3 miles"
                     value={form.race_distance_km ?? ''} onChange={e => set('race_distance_km', e.target.value)} />
                 </div>
