@@ -170,7 +170,18 @@ Only the raw JSON object, starting with { and ending with }.`,
 
         send('progress', { step: 5, message: 'Creating your Google Sheets spreadsheet...' })
 
-        const sheetsUrl = await writeToSheets(sessionId, session.email!, plan, (session as any).name, session.nutrition_upsell)
+        // Keep SSE alive while Apps Script runs (can take 30-60s)
+        const heartbeat = setInterval(() => {
+          try { send('progress', { step: 5, message: 'Creating your Google Sheets spreadsheet...' }) }
+          catch { /* connection already closed */ }
+        }, 10000)
+
+        let sheetsUrl: string
+        try {
+          sheetsUrl = await writeToSheets(sessionId, session.email!, plan, (session as any).name, session.nutrition_upsell)
+        } finally {
+          clearInterval(heartbeat)
+        }
 
         await supabase
           .from('quiz_sessions')
