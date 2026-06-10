@@ -331,15 +331,6 @@ export default function QuizPage() {
                 ))}
               </div>
               <div>
-                <label style={s.label}>Your current performance metric (optional)</label>
-                <input style={s.input}
-                  placeholder={form.sport ? METRIC_HINTS[form.sport] ?? '' : 'e.g. 5:30 min/km'}
-                  value={form.metric ?? ''} onChange={e => set('metric', e.target.value)} />
-                <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', margin: '6px 0 0' }}>
-                  Leave blank and we'll use benchmark values for your level.
-                </p>
-              </div>
-              <div>
                 <label style={{ ...s.label, marginBottom: 10 }}>Any injuries or limitations? (optional)</label>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                   {INJURIES.map(inj => (
