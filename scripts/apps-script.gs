@@ -5,9 +5,15 @@
 // at script.google.com and click Deploy > New Deployment (Web App)
 // ============================================================
 
-const FOLDER_ID = '1-G_BtN6qElFVf3rErFYCzi0oAhG69AKu'
-const SECRET    = 'secret-app-script-athlete-planner-2026'
-const NUTRITION_PDF_URL = 'https://drive.google.com/file/d/12ox5uh6ouTV8XlOSifXn2IgqjAgvvLCH/view?usp=sharing'
+// ⚠️ SECURITY: never hardcode these — the repo is public.
+// Set them in the Apps Script editor: Project Settings → Script Properties:
+//   FOLDER_ID         → Drive folder id where plans are stored
+//   SECRET            → must match APPS_SCRIPT_SECRET on Vercel (ROTATE the old leaked one!)
+//   NUTRITION_PDF_URL → link to the nutrition guide PDF (re-upload — the old link was public)
+const PROPS = PropertiesService.getScriptProperties()
+const FOLDER_ID         = PROPS.getProperty('FOLDER_ID')
+const SECRET            = PROPS.getProperty('SECRET')
+const NUTRITION_PDF_URL = PROPS.getProperty('NUTRITION_PDF_URL')
 
 const PHASE_COLORS = {
   'F1': '#E8F5E9',
@@ -36,7 +42,7 @@ function doPost(e) {
   try {
     const body = JSON.parse(e.postData.contents)
 
-    if (body.secret !== SECRET) {
+    if (!SECRET || body.secret !== SECRET) {
       return jsonResponse({ success: false, error: 'Unauthorized' })
     }
 
@@ -58,11 +64,11 @@ function doPost(e) {
 
 
 // ============================================================
-// CALCULATE PLAN START DATE
-// ============================================================
+// CALCULATE PLAN START DATE — weeks ALWAYS start on MONDAY
+// (must stay consistent with lib/prompt.ts)
 // Rules:
-//   this_week  → Sunday of the current week (week of purchase)
-//   next_week  → next Sunday from the purchase date
+//   this_week  → Monday of the current week (week of purchase)
+//   next_week  → next Monday from the purchase date
 // ============================================================
 function getPlanStartDate(planStart) {
   const now = new Date()
@@ -78,12 +84,12 @@ function getPlanStartDate(planStart) {
   const result = new Date(year, month, day)
 
   if (planStart === 'this_week') {
-    // Go back to the Sunday of this week
-    result.setDate(day - dayOfWeek)
+    // Go back to the Monday of this week (Sunday belongs to the week that started 6 days earlier)
+    result.setDate(day + (dayOfWeek === 0 ? -6 : 1 - dayOfWeek))
   } else {
-    // next_week → next Sunday
-    const daysUntilNextSunday = dayOfWeek === 0 ? 7 : (7 - dayOfWeek)
-    result.setDate(day + daysUntilNextSunday)
+    // next_week → next Monday
+    const daysUntilNextMonday = dayOfWeek === 0 ? 1 : dayOfWeek === 1 ? 7 : 8 - dayOfWeek
+    result.setDate(day + daysUntilNextMonday)
   }
 
   return result
@@ -166,6 +172,8 @@ function createPlanSpreadsheet(email, plan, nutritionUpsell, athleteName, planSt
   createWeeklyPlanTab(ss, plan)
   createWeeklyLogTab(ss, plan)
   createStrengthTab(ss, plan)
+  if (plan.race_day_plan) createRaceDayTab(ss, plan)
+  if (plan.nutrition_plan) createNutritionTab(ss, plan)
 
   const defaultSheet = ss.getSheetByName('Sheet1') || ss.getSheetByName('Página1')
   if (defaultSheet) ss.deleteSheet(defaultSheet)
@@ -467,6 +475,123 @@ function createStrengthTab(ss, plan) {
 
 
 // ============================================================
+// TAB 6 — Race Day Plan (optional)
+// ============================================================
+function createRaceDayTab(ss, plan) {
+  const rd = plan.race_day_plan
+  if (!rd) return
+  const sheet = ss.insertSheet('Race Day')
+  sheet.setTabColor('#7E57C2')
+  sheet.setColumnWidth(1, 180)
+  sheet.setColumnWidth(2, 140)
+  sheet.setColumnWidth(3, 160)
+  sheet.setColumnWidth(4, 260)
+  sheet.setColumnWidth(5, 320)
+
+  let row = 1
+  writeSectionHeader(sheet, row, 5, '🏁 RACE DAY PLAN', '#7E57C2'); row++
+
+  sheet.getRange(row, 1).setValue('Wake up').setFontWeight('bold')
+  sheet.getRange(row, 2, 1, 4).merge().setValue(rd.wake_up || '')
+  row++
+  sheet.getRange(row, 1).setValue('Breakfast').setFontWeight('bold')
+  sheet.getRange(row, 2, 1, 4).merge().setValue(rd.breakfast || '').setWrap(true)
+  row += 2
+
+  if (rd.segments && rd.segments.length) {
+    writeTableHeader(sheet, row, 1, ['Segment', 'Target time', 'Pace / power', 'Nutrition', 'Notes']); row++
+    rd.segments.forEach(function(seg) {
+      sheet.getRange(row, 1).setValue(seg.segment || '').setFontWeight('bold')
+      sheet.getRange(row, 2).setValue(seg.target_time || '')
+      sheet.getRange(row, 3).setValue(seg.pace_target || '')
+      sheet.getRange(row, 4).setValue(seg.nutrition || '').setWrap(true)
+      sheet.getRange(row, 5).setValue(seg.notes || '').setWrap(true)
+      row++
+    })
+    row++
+  }
+
+  if (rd.transitions && rd.transitions.length) {
+    writeSectionHeader(sheet, row, 5, 'Transitions checklist', '#9575CD'); row++
+    rd.transitions.forEach(function(t) {
+      sheet.getRange(row, 1, 1, 5).merge().setValue('☐ ' + t).setWrap(true)
+      row++
+    })
+    row++
+  }
+
+  if (rd.mental_cues && rd.mental_cues.length) {
+    writeSectionHeader(sheet, row, 5, 'Mental cues', '#9575CD'); row++
+    rd.mental_cues.forEach(function(c) {
+      sheet.getRange(row, 1, 1, 5).merge().setValue('💭 ' + c).setWrap(true)
+      row++
+    })
+  }
+}
+
+
+// ============================================================
+// TAB 7 — Nutrition Plan (upsell only)
+// ============================================================
+function createNutritionTab(ss, plan) {
+  const np = plan.nutrition_plan
+  if (!np) return
+  const sheet = ss.insertSheet('Nutrition')
+  sheet.setTabColor('#BA7517')
+  sheet.setColumnWidth(1, 170)
+  sheet.setColumnWidth(2, 120)
+  sheet.setColumnWidth(3, 120)
+  sheet.setColumnWidth(4, 130)
+  sheet.setColumnWidth(5, 420)
+
+  let row = 1
+  writeSectionHeader(sheet, row, 5, '🍽️ PERSONALISED NUTRITION PLAN', '#BA7517'); row++
+  row++
+
+  function writeTiming(title, t) {
+    if (!t) return
+    writeSectionHeader(sheet, row, 5, title, '#D4A04C'); row++
+    writeTableHeader(sheet, row, 1, ['Timing', 'Carbs (g)', 'Protein (g)', 'Hydration (ml)', 'Suggestions']); row++
+    sheet.getRange(row, 1).setValue(t.timing || '')
+    sheet.getRange(row, 2).setValue(t.carbs_g != null ? t.carbs_g : '')
+    sheet.getRange(row, 3).setValue(t.protein_g != null ? t.protein_g : '')
+    sheet.getRange(row, 4).setValue(t.hydration_ml != null ? t.hydration_ml : '')
+    sheet.getRange(row, 5).setValue((t.suggestions || []).join(' · ')).setWrap(true)
+    row += 2
+  }
+
+  writeTiming('Pre-workout', np.pre_workout)
+
+  if (np.during && np.during.length) {
+    writeSectionHeader(sheet, row, 5, 'During training (by zone)', '#D4A04C'); row++
+    writeTableHeader(sheet, row, 1, ['Zone', 'Carbs/hour (g)', 'Hydration/hour (ml)', '', '']); row++
+    np.during.forEach(function(d) {
+      sheet.getRange(row, 1).setValue(d.zone || '')
+      sheet.getRange(row, 2).setValue(d.carbs_per_hour != null ? d.carbs_per_hour : '')
+      sheet.getRange(row, 3).setValue(d.hydration_per_hour != null ? d.hydration_per_hour : '')
+      row++
+    })
+    row++
+  }
+
+  writeTiming('Post-workout', np.post_workout)
+
+  if (np.race_day && np.race_day.length) {
+    writeSectionHeader(sheet, row, 5, 'Race day fuelling timeline', '#D4A04C'); row++
+    writeTableHeader(sheet, row, 1, ['Timing', 'Carbs (g)', 'Protein (g)', 'Hydration (ml)', 'Suggestions']); row++
+    np.race_day.forEach(function(t) {
+      sheet.getRange(row, 1).setValue(t.timing || '')
+      sheet.getRange(row, 2).setValue(t.carbs_g != null ? t.carbs_g : '')
+      sheet.getRange(row, 3).setValue(t.protein_g != null ? t.protein_g : '')
+      sheet.getRange(row, 4).setValue(t.hydration_ml != null ? t.hydration_ml : '')
+      sheet.getRange(row, 5).setValue((t.suggestions || []).join(' · ')).setWrap(true)
+      row++
+    })
+  }
+}
+
+
+// ============================================================
 // HELPERS
 // ============================================================
 
@@ -641,6 +766,6 @@ function testWithFakePlan() {
   }
 
   // Change 'this_week' to 'next_week' to test the other option
-  const url = createPlanSpreadsheet('luc.kenji2000@gmail.com', fakePlan, false, 'James', 'this_week')
+  const url = createPlanSpreadsheet('your-test-email@example.com', fakePlan, false, 'James', 'this_week')
   console.log('Plan created successfully:', url)
 }

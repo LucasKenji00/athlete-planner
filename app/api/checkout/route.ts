@@ -17,10 +17,19 @@ export async function POST(req: NextRequest) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  await supabase
+  const { data: session, error } = await supabase
     .from('quiz_sessions')
     .update({ nutrition_upsell: !!nutrition_upsell })
     .eq('id', sessionId)
+    .select('email, status')
+    .single()
+
+  if (error || !session) {
+    return NextResponse.json({ error: 'Session not found' }, { status: 404 })
+  }
+  if (session.status !== 'pending') {
+    return NextResponse.json({ error: 'This session has already been paid' }, { status: 409 })
+  }
 
   const origin = req.headers.get('origin') ?? 'http://localhost:3000'
   const priceId = nutrition_upsell
@@ -31,6 +40,8 @@ export async function POST(req: NextRequest) {
     payment_method_types: ['card'],
     line_items: [{ price: priceId, quantity: 1 }],
     mode: 'payment',
+    customer_email: session.email ?? undefined,  // pre-fill — less friction
+    client_reference_id: sessionId,
     success_url: `${origin}/loading/${sessionId}`,
     cancel_url:  `${origin}/quiz`,
     metadata: { sessionId },

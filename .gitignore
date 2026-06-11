@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude-flow local session data (contains local paths — never commit)
+.claude-flow/
+
+# local backups
+*.bak

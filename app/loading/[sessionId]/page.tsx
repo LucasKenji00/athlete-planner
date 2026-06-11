@@ -76,13 +76,17 @@ export default function LoadingPage() {
             const plan = data.generated_plan
             if (plan) {
               sessionStorage.setItem(`plan_${sessionId}`, JSON.stringify({
-                sport:         plan.profile?.sport,
-                event_name:    plan.profile?.event_name,
-                weeks_total:   plan.profile?.weeks_total,
+                sport:          plan.profile?.sport,
+                event_name:     plan.profile?.event_name,
+                weeks_total:    plan.profile?.weeks_total,
                 hours_per_week: plan.profile?.hours_per_week_avg,
-                phases:        plan.periodization?.length ?? 0,
-                zones:         plan.zones,
-                first_week:    plan.weeks?.[0],
+                phases:         plan.periodization?.length ?? 0,
+                zones:          plan.zones,
+                periodization:  plan.periodization,
+                first_weeks:    plan.weeks?.slice(0, 3),
+                first_week:     plan.weeks?.[0],
+                nutrition_plan: plan.nutrition_plan ?? null,
+                sheetsUrl:      data.sheets_url ?? null,
               }))
             }
             router.push(`/preview/${sessionId}`)
