@@ -80,7 +80,6 @@ export default function PreviewPage() {
   const searchParams = useSearchParams()
   const sessionId = params.sessionId as string
   const [plan, setPlan] = useState<PlanSummary | null>(null)
-  const [sheetsUrl, setSheetsUrl] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [openWeeks, setOpenWeeks] = useState<Record<number, boolean>>({ 1: true })
 
@@ -88,7 +87,6 @@ export default function PreviewPage() {
   useEffect(() => {
     if (searchParams.get('demo') === '1') {
       setPlan(DEMO)
-      setSheetsUrl(DEMO.sheetsUrl ?? null)
       setLoading(false)
       return
     }
@@ -97,7 +95,6 @@ export default function PreviewPage() {
     if (stored) {
       const data = JSON.parse(stored)
       setPlan(data)
-      setSheetsUrl(data.sheetsUrl ?? null)
       setLoading(false)
       return
     }
@@ -107,40 +104,11 @@ export default function PreviewPage() {
       .then(data => {
         if (data.generated_plan) {
           setPlan(summaryFromPlan(data.generated_plan))
-          setSheetsUrl(data.sheets_url ?? null)
         }
         setLoading(false)
       })
       .catch(() => setLoading(false))
   }, [sessionId, searchParams])
-
-  // ── Sheets is created in the background — poll until the link exists ──
-  useEffect(() => {
-    if (sheetsUrl || loading || !plan || searchParams.get('demo') === '1') return
-    let attempts = 0
-    let stopped = false
-    const poll = async () => {
-      if (stopped || attempts >= 36) return // ~3 min max
-      attempts++
-      try {
-        const res = await fetch(`/api/session/${sessionId}`)
-        const data = await res.json()
-        if (data.sheets_url) {
-          setSheetsUrl(data.sheets_url)
-          const stored = sessionStorage.getItem(`plan_${sessionId}`)
-          if (stored) {
-            const parsed = JSON.parse(stored)
-            parsed.sheetsUrl = data.sheets_url
-            sessionStorage.setItem(`plan_${sessionId}`, JSON.stringify(parsed))
-          }
-          return
-        }
-      } catch { /* keep polling */ }
-      setTimeout(poll, 5000)
-    }
-    poll()
-    return () => { stopped = true }
-  }, [sheetsUrl, loading, plan, sessionId, searchParams])
 
   const card: React.CSSProperties = {
     background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(24px)',
@@ -215,31 +183,15 @@ export default function PreviewPage() {
           <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.6)', margin: '0 0 24px', lineHeight: 1.5 }}>
             {plan.event_name || plan.sport} · {plan.weeks_total} weeks · {plan.hours_per_week}/week avg
           </p>
-          {sheetsUrl ? (
-            <a href={sheetsUrl} target="_blank" rel="noopener noreferrer" style={{
-              display: 'inline-block', padding: '14px 32px',
-              background: '#CF6232', color: '#fff', textDecoration: 'none',
-              borderRadius: 12, fontSize: 15, fontWeight: 700, letterSpacing: '0.2px',
-            }}>
-              Open in Google Sheets →
-            </a>
-          ) : (
-            <div style={{
-              padding: '12px 20px', background: 'rgba(255,255,255,0.06)',
-              borderRadius: 10, fontSize: 14, color: 'rgba(255,255,255,0.6)',
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-            }}>
-              <span style={{
-                width: 14, height: 14, borderRadius: '50%', flexShrink: 0,
-                border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#CF6232',
-                animation: 'spin 0.9s linear infinite', display: 'inline-block',
-              }} />
-              Creating your Google Sheets spreadsheet...
-              <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
-            </div>
-          )}
+          <a href={`/plan/${sessionId}`} style={{
+            display: 'inline-block', padding: '14px 32px',
+            background: '#CF6232', color: '#fff', textDecoration: 'none',
+            borderRadius: 12, fontSize: 15, fontWeight: 700, letterSpacing: '0.2px',
+          }}>
+            Open My Full Plan →
+          </a>
           <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', margin: '12px 0 0' }}>
-            📧 The link will also be sent to your email.
+            📧 We've also emailed you this link — save it!
           </p>
         </div>
 
@@ -436,15 +388,13 @@ export default function PreviewPage() {
         )}
 
         {/* Footer CTA */}
-        {sheetsUrl && (
-          <a href={sheetsUrl} target="_blank" rel="noopener noreferrer" style={{
-            display: 'block', padding: '15px', textAlign: 'center',
-            background: '#CF6232', color: '#fff', textDecoration: 'none',
-            borderRadius: 14, fontSize: 15, fontWeight: 700,
-          }}>
-            Open Full Plan in Google Sheets →
-          </a>
-        )}
+        <a href={`/plan/${sessionId}`} style={{
+          display: 'block', padding: '15px', textAlign: 'center',
+          background: '#CF6232', color: '#fff', textDecoration: 'none',
+          borderRadius: 14, fontSize: 15, fontWeight: 700,
+        }}>
+          Open My Full Plan →
+        </a>
 
         <p style={{ textAlign: 'center', fontSize: 12, color: 'rgba(255,255,255,0.25)', margin: 0 }}>
           Generated by Athlete Planner · Powered by AI

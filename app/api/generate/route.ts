@@ -13,6 +13,7 @@ import {
   WEEKS_PER_CHUNK,
 } from '@/lib/prompt'
 import type { QuizSession, GeneratedPlan, TrainingWeek } from '@/types'
+import { sendPlanEmail } from '@/lib/email'
 
 const MODEL = 'claude-haiku-4-5-20251001'
 
@@ -365,24 +366,26 @@ export async function GET(req: NextRequest) {
         send('complete', buildPlanSummary(plan, null))
         close()
 
-        // ── Google Sheets + email happen in the BACKGROUND ──
-        // The preview page polls /api/session for sheets_url.
+        // ── Delivery email goes out in the BACKGROUND via Resend ──
+        // The plan itself is already live at /plan/{sessionId}.
         const email = session.email!
         const name = session.name
         const nutritionUpsell = session.nutrition_upsell
-        const planStart = session.plan_start
+        const origin = req.nextUrl.origin
         after(async () => {
           try {
-            const sheetsUrl = await writeToSheets(sessionId, email, plan, name, nutritionUpsell, planStart)
-            await supabase
-              .from('quiz_sessions')
-              .update({ sheets_url: sheetsUrl })
-              .eq('id', sessionId)
+            await sendPlanEmail({
+              to: email,
+              athleteName: name,
+              plan,
+              planUrl: `${origin}/plan/${sessionId}`,
+              icsUrl: `${origin}/api/plan/${sessionId}/ics`,
+              nutritionUpsell,
+            })
           } catch (err) {
-            console.error('[generate] Background Sheets creation failed:', err)
-            // Plan stays 'completed' — user has the preview; retry path:
-            // hitting this endpoint again won't regenerate, but support can
-            // re-trigger Sheets from the Apps Script editor if needed.
+            console.error('[generate] Delivery email failed:', err)
+            // Plan stays 'completed' — the user already has the preview
+            // and the plan page link; only the email needs re-sending.
           }
         })
       } catch (err) {
@@ -406,35 +409,3 @@ export async function GET(req: NextRequest) {
   return new Response(stream, { headers })
 }
 
-// ------------------------------------------------------------
-// Google Sheets via Apps Script
-// ------------------------------------------------------------
-async function writeToSheets(
-  sessionId: string,
-  email: string,
-  plan: GeneratedPlan,
-  athleteName?: string,
-  nutritionUpsell?: boolean,
-  planStart?: string
-): Promise<string> {
-  const response = await fetch(process.env.APPS_SCRIPT_URL!, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      secret:           process.env.APPS_SCRIPT_SECRET!,
-      session_id:       sessionId,
-      email,
-      athlete_name:     athleteName || plan.profile.name || '',
-      nutrition_upsell: nutritionUpsell ?? false,
-      plan_start:       planStart ?? 'next_week',
-      plan,
-    }),
-  })
-
-  if (!response.ok) throw new Error(`Apps Script returned ${response.status}`)
-
-  const result = await response.json()
-  if (!result.success) throw new Error(result.error || 'Apps Script failed')
-
-  return result.sheetsUrl
-}

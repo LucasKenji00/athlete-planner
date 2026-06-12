@@ -15,7 +15,7 @@ export async function GET(
 
   const { data, error } = await supabase
     .from('quiz_sessions')
-    .select('status, sheets_url, generated_plan, email')
+    .select('status, sheets_url, generated_plan, plan_start')
     .eq('id', sessionId)
     .single()
 
